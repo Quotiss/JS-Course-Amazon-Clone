@@ -1,4 +1,5 @@
 import {renderOrderSummary} from '../../scripts/checkout/orderSummary.js';
+import {renderPaymentSummary} from '../../scripts/checkout/paymentSummary.js';
 import {loadFromStorage, cart} from '../../data/cart.js';
 
 describe('test suite: renderOrderSummary', () => {
@@ -30,6 +31,10 @@ describe('test suite: renderOrderSummary', () => {
     renderOrderSummary();
   });
 
+  afterEach(() => {
+    document.querySelector('.js-test-container').innerHTML = '';
+  });
+
   it('displays the cart', () => {
     expect(
       document.querySelectorAll('.js-cart-item-container').length
@@ -40,8 +45,18 @@ describe('test suite: renderOrderSummary', () => {
     expect(
       document.querySelector(`.js-product-quantity-${productId2}`).innerText
     ).toContain('Quantity: 1');
-
-    document.querySelector('.js-test-container').innerHTML = '';
+    expect(
+      document.querySelector(`.js-product-name-${productId1}`).innerText
+    ).toEqual('Black and Gray Athletic Cotton Socks - 6 Pairs');
+    expect(
+      document.querySelector(`.js-product-name-${productId2}`).innerText
+    ).toEqual('Intermediate Size Basketball');
+    expect(
+      document.querySelector(`.js-product-price-${productId1}`).innerText
+    ).toEqual('$10.90');
+    expect(
+      document.querySelector(`.js-product-price-${productId2}`).innerText
+    ).toEqual('$20.95');
   });
 
   it('removes a product', () => {
@@ -59,5 +74,18 @@ describe('test suite: renderOrderSummary', () => {
     expect(cart[0].productId).toEqual(productId2);
   });
 
-  document.querySelector('.js-test-container').innerHTML = '';
+  it('updates the delivery option', () => {
+    document.querySelector(`.js-delivery-option-${productId1}-3`).click();
+
+    expect(document.querySelector(`.js-delivery-option-input-${productId1}-3`).checked).toEqual(true);
+    expect(cart.length).toEqual(2);
+    expect(cart[0].productId).toEqual(productId1);
+    expect(cart[0].deliveryOptionId).toEqual('3');
+
+    expect(document.querySelector('.js-payment-summary-shipping')
+    .innerText)
+    .toEqual('$14.98');
+
+    expect(document.querySelector('.js-payment-summary-total').innerText).toEqual('$63.50');
+  });
 });
