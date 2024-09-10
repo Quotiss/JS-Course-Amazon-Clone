@@ -10,8 +10,10 @@ async function loadPage() {
   try {
     // throw 'error1';
 
-    await loadProductsFetch();
-    await loadCartFetch();
+    await Promise.all([
+      loadProductsFetch(),
+      loadCartFetch()
+    ]);
 
   } catch (error) {
     console.log('Unexpected error. Please try again later.');
